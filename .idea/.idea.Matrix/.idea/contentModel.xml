@@ -13,12 +13,12 @@
       <e p="Matrix.sln" t="IncludeFlat" />
       <e p="MatrixLib" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
-        <e p="LuDecomposition.cs" t="Include" />
+        <e p="LuDecompositionResult.cs" t="Include" />
         <e p="Matrix.cs" t="Include" />
         <e p="MatrixLib.csproj" t="IncludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
-            <e p="netstandard2.0" t="Include">
+            <e p="netstandard2.1" t="Include">
               <e p="MatrixLib.AssemblyInfo.cs" t="Include" />
             </e>
           </e>

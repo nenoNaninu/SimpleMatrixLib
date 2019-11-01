@@ -90,7 +90,7 @@ namespace MatrixLib
             return new Matrix(newArray, this.Row, this.Col);
         }
 
-        public LuDecomposition LuSolve()
+        public LuDecompositionResult LuSolve()
         {
             if (Row != Col)
             {
@@ -121,7 +121,6 @@ namespace MatrixLib
                     u[0, j] = a[0, j] / l[0, 0];
                 }
 
-
                 for (int j = 1; j < a.Col; j++)
                 {
                     for (int k = 1; k < a.Col; k++)
@@ -135,7 +134,55 @@ namespace MatrixLib
                 u = new SubMatrix(u, 1, 1, u.Row - 1, u.Col - 1);
             }
 
-            return new LuDecomposition(lOrigin, uOrigin);
+            return new LuDecompositionResult(lOrigin, uOrigin);
+        }
+
+        /// <summary>
+        /// このMatrix(this.)がAだとしたとき、
+        /// b = Axのxを求める。
+        /// </summary>
+        /// <param name="b"></param>
+        /// <returns>x</returns>
+        public double[] SolveSimultaneousEquations(double[] b)
+        {
+            var luResult = this.LuSolve();
+            var l = luResult.L;
+            var u = luResult.U;
+
+            //Ly = bのyを求める
+            Span<double> y = stackalloc double[b.Length];
+
+            y[0] = b[0] / l[0, 0];
+
+            for (int i = 1; i < y.Length; i++)
+            {
+                var sum = 0.0;
+
+                for (int j = 0; j < i; j++)
+                {
+                    sum += y[j] * l[i, j];
+                }
+
+                y[i] = (b[i] - sum) / l[i, i];
+            }
+
+            var x = new double[b.Length];
+
+            x[^1] = y[^1];
+
+            //Ux = yのxを求める
+            for (int i = y.Length - 1; 0 <= i; i--)
+            {
+                var sum = 0.0;
+                for (int j = i + 1; j < y.Length; j++)
+                {
+                    sum += u[i, j] * x[j];
+                }
+
+                x[i] = y[i] - sum;
+            }
+
+            return x;
         }
     }
 }
