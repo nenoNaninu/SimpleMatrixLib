@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatrixLib", "MatrixLib\MatrixLib.csproj", "{D68550C0-854D-4CCD-B441-6669B67E965E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatrixLib.Test", "MatrixLib.Test\MatrixLib.Test.csproj", "{55B08BAB-BFC1-4296-A8DE-8117D81502DE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D68550C0-854D-4CCD-B441-6669B67E965E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D68550C0-854D-4CCD-B441-6669B67E965E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D68550C0-854D-4CCD-B441-6669B67E965E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D68550C0-854D-4CCD-B441-6669B67E965E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{55B08BAB-BFC1-4296-A8DE-8117D81502DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{55B08BAB-BFC1-4296-A8DE-8117D81502DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{55B08BAB-BFC1-4296-A8DE-8117D81502DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{55B08BAB-BFC1-4296-A8DE-8117D81502DE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
