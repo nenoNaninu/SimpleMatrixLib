@@ -3,25 +3,26 @@ using System.Text;
 
 namespace MatrixLib
 {
-    public readonly struct SubMatrix
+    public readonly struct SubMatrix : IMatrix<double>
     {
-        public readonly Matrix Original;
-        public readonly int Row;
-        public readonly int Col;
+        private readonly Matrix _reference;
         private readonly int _startIndex;
 
-        public SubMatrix(Matrix original, int startSubRow, int startSubCol, int row, int col)
+        public int Row { get; }
+        public int Col { get; }
+
+        public SubMatrix(Matrix reference, int startSubRow, int startSubCol, int row, int col)
         {
-            _startIndex = startSubCol + original.Col * startSubRow;
-            Original = original;
+            _startIndex = startSubCol + reference.Col * startSubRow;
+            _reference = reference;
             Row = row;
             Col = col;
         }
 
         public SubMatrix(SubMatrix subMatrix, int startSubRow, int startSubCol, int row, int col)
         {
-            _startIndex = subMatrix._startIndex + startSubCol + subMatrix.Original.Col * startSubRow;
-            Original = subMatrix.Original;
+            _startIndex = subMatrix._startIndex + startSubCol + subMatrix._reference.Col * startSubRow;
+            _reference = subMatrix._reference;
             Row = row;
             Col = col;
         }
@@ -35,9 +36,9 @@ namespace MatrixLib
                     throw new ArgumentException("this[int row, int col] out of range");
                 }
 
-                return Original.Array[_startIndex + col + row * Original.Row];
+                return _reference.Array[_startIndex + col + row * _reference.Row];
             }
-            set => Original.Array[_startIndex + col + row * Original.Row] = value;
+            set => _reference.Array[_startIndex + col + row * _reference.Row] = value;
         }
 
         public override string ToString()
@@ -47,8 +48,7 @@ namespace MatrixLib
             {
                 for (int j = 0; j < Col; j++)
                 {
-                    builder.Append(this[i, j].ToString());
-                    builder.Append(" ");
+                    builder.Append($"{this[i, j]:N3} ");
                 }
 
                 builder.Append(Environment.NewLine);

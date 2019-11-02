@@ -13,6 +13,7 @@
       <e p="Matrix.sln" t="IncludeFlat" />
       <e p="MatrixLib" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
+        <e p="IMatrix.cs" t="Include" />
         <e p="LuDecompositionResult.cs" t="Include" />
         <e p="Matrix.cs" t="Include" />
         <e p="MatrixLib.csproj" t="IncludeRecursive" />
@@ -23,6 +24,7 @@
             </e>
           </e>
         </e>
+        <e p="ReferencedTransposeMatrix.cs" t="Include" />
         <e p="SubMatrix.cs" t="Include" />
       </e>
       <e p="MatrixLib.Test" t="IncludeRecursive">

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace MatrixLib
 {
-    public class Matrix
+    public class Matrix : IMatrix<double>
     {
         public double[] Array { get; }
 
@@ -62,8 +62,7 @@ namespace MatrixLib
             {
                 for (int j = 0; j < Col; j++)
                 {
-                    builder.Append(this[i, j].ToString());
-                    builder.Append(" ");
+                    builder.Append($"{this[i, j]:N3} ");
                 }
 
                 builder.Append(Environment.NewLine);
@@ -183,6 +182,160 @@ namespace MatrixLib
             }
 
             return x;
+        }
+
+        public Matrix Inverse()
+        {
+            var luResult = this.LuSolve();
+            var l = luResult.L;
+            var u = luResult.U;
+            return l.InverseLowerTriangularMatrix() * u.InverseUpperTriangularMatrix();
+        }
+
+        /// <summary>
+        /// 上三角行列かの確認はしないので自己責任。
+        /// </summary>
+        /// <returns></returns>
+        public Matrix InverseUpperTriangularMatrix()
+        {
+            //上三角行列の逆行列は上三角行列
+            if (this.Col != this.Row)
+            {
+                throw new Exception("Col and Row must be same");
+            }
+
+            var answer = new Matrix(this.Row, this.Col);
+
+            for (int i = 0; i < answer.Col; i++)
+            {
+                var featuredVector = new SubMatrix(answer, 0, i, answer.Row, 1);
+
+                featuredVector[i, 0] = 1 / this[i, i];
+
+                for (int j = i - 1; 0 <= j; j--)
+                {
+                    double sum = 0.0;
+
+                    for (int k = j + 1; k < answer.Row; k++)
+                    {
+                        sum += featuredVector[k, 0] * this[j, k];
+                    }
+                    
+                    featuredVector[j, 0] = -sum / this[i, i];
+                }
+            }
+            
+            return answer;
+        }
+
+        /// <summary>
+        /// 下三角行列かの確認はしないので自己責任。
+        /// </summary>
+        /// <returns></returns>
+        public Matrix InverseLowerTriangularMatrix()
+        {
+            //上三角行列の逆行列は上三角行列
+            if (this.Col != this.Row)
+            {
+                throw new Exception("Col and Row must be same");
+            }
+
+            var answer = new Matrix(this.Row, this.Col);
+
+            for (int i = 0; i < answer.Col; i++)
+            {
+                //逆行列の各列ごとに求めて行く。
+                var featuredVector = new SubMatrix(answer, 0, i, answer.Row, 1);
+
+                featuredVector[i, 0] = 1 / this[i, i];
+
+                for (int j = i + 1; j < this.Row; j++)
+                {
+                    double sum = 0.0;
+
+                    for (int k = i; k <= j; k++)
+                    {
+                        sum += this[j, k] * featuredVector[k, 0];
+                    }
+
+                    featuredVector[j, 0] = -sum / this[j, j];
+                }
+            }
+            return answer;
+        }
+
+        public Matrix PseudoInverse()
+        {
+            return null;
+        }
+
+        public static Matrix operator *(Matrix l, Matrix r)
+        {
+            if (l.Col != r.Row)
+            {
+                throw new ArgumentException("l.Col and r.Row must be same.");
+            }
+
+            var answer = new Matrix(l.Row, r.Col);
+
+            for (int i = 0; i < answer.Row; i++)
+            {
+                for (int j = 0; j < answer.Col; j++)
+                {
+                    for (int k = 0; k < l.Col; k++)
+                    {
+                        answer[i, j] += l[i, k] * r[k, j];
+                    }
+                }
+            }
+
+            return answer;
+        }
+
+        public static Matrix operator *(Matrix l, ReferencedTransposeMatrix r)
+        {
+            if (l.Col != r.Row)
+            {
+                throw new ArgumentException("l.Col and r.Row must be same.");
+            }
+
+            var answer = new Matrix(l.Row, r.Col);
+
+            for (int i = 0; i < answer.Row; i++)
+            {
+                for (int j = 0; j < answer.Col; j++)
+                {
+                    for (int k = 0; k < l.Col; k++)
+                    {
+                        answer[i, j] += l[i, k] * r[k, j];
+                    }
+                }
+            }
+
+            return answer;
+        }
+
+        public static Matrix operator *(ReferencedTransposeMatrix l, Matrix r)
+        {
+            if (l.Col != r.Row)
+            {
+                throw new ArgumentException("l.Col and r.Row must be same.");
+            }
+
+            var answer = new Matrix(l.Row, r.Col);
+
+            for (int i = 0; i < answer.Row; i++)
+            {
+                for (int j = 0; j < answer.Col; j++)
+                {
+                    for (int k = 0; k < l.Col; k++)
+                    {
+                        answer[i, j] += l[i, k] * r[k, j];
+                    }
+                }
+            }
+
+            return answer;
         }
     }
 }
