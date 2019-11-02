@@ -189,7 +189,7 @@ namespace MatrixLib
             var luResult = this.LuSolve();
             var l = luResult.L;
             var u = luResult.U;
-            return l.InverseLowerTriangularMatrix() * u.InverseUpperTriangularMatrix();
+            return u.InverseUpperTriangularMatrix() * l.InverseLowerTriangularMatrix();
         }
 
         /// <summary>
@@ -208,9 +208,8 @@ namespace MatrixLib
 
             for (int i = 0; i < answer.Col; i++)
             {
-                var featuredVector = new SubMatrix(answer, 0, i, answer.Row, 1);
-
-                featuredVector[i, 0] = 1 / this[i, i];
+                //answer[~,i]が見ている列のベクトル
+                answer[i, i] = 1 / this[i, i];
 
                 for (int j = i - 1; 0 <= j; j--)
                 {
@@ -218,10 +217,10 @@ namespace MatrixLib
 
                     for (int k = j + 1; k < answer.Row; k++)
                     {
-                        sum += featuredVector[k, 0] * this[j, k];
+                        sum += answer[k, i] * this[j, k];
                     }
                     
-                    featuredVector[j, 0] = -sum / this[i, i];
+                    answer[j, i] = -sum / this[i, i];
                 }
             }
             
@@ -245,9 +244,8 @@ namespace MatrixLib
             for (int i = 0; i < answer.Col; i++)
             {
                 //逆行列の各列ごとに求めて行く。
-                var featuredVector = new SubMatrix(answer, 0, i, answer.Row, 1);
-
-                featuredVector[i, 0] = 1 / this[i, i];
+                //answer[~,i]が見ている列のベクトル
+                answer[i, i] = 1 / this[i, i];
 
                 for (int j = i + 1; j < this.Row; j++)
                 {
@@ -255,10 +253,10 @@ namespace MatrixLib
 
                     for (int k = i; k <= j; k++)
                     {
-                        sum += this[j, k] * featuredVector[k, 0];
+                        sum += this[j, k] * answer[k, i];
                     }
 
-                    featuredVector[j, 0] = -sum / this[j, j];
+                    answer[j, i] = -sum / this[j, j];
                 }
             }
             return answer;
