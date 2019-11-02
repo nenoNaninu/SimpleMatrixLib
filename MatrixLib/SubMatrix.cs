@@ -8,45 +8,45 @@ namespace MatrixLib
         private readonly Matrix _reference;
         private readonly int _startIndex;
 
-        public int Row { get; }
-        public int Col { get; }
+        public int RowCount { get; }
+        public int ColCount { get; }
 
         public SubMatrix(Matrix reference, int startSubRow, int startSubCol, int row, int col)
         {
-            _startIndex = startSubCol + reference.Col * startSubRow;
+            _startIndex = startSubCol + reference.ColCount * startSubRow;
             _reference = reference;
-            Row = row;
-            Col = col;
+            RowCount = row;
+            ColCount = col;
         }
 
         public SubMatrix(SubMatrix subMatrix, int startSubRow, int startSubCol, int row, int col)
         {
-            _startIndex = subMatrix._startIndex + startSubCol + subMatrix._reference.Col * startSubRow;
+            _startIndex = subMatrix._startIndex + startSubCol + subMatrix._reference.ColCount * startSubRow;
             _reference = subMatrix._reference;
-            Row = row;
-            Col = col;
+            RowCount = row;
+            ColCount = col;
         }
 
         public double this[int row, int col]
         {
             get
             {
-                if (row >= Row || col >= Col)
+                if (row >= RowCount || col >= ColCount)
                 {
                     throw new ArgumentException("this[int row, int col] out of range");
                 }
 
-                return _reference.Array[_startIndex + col + row * _reference.Row];
+                return _reference.Array[_startIndex + col + row * _reference.RowCount];
             }
-            set => _reference.Array[_startIndex + col + row * _reference.Row] = value;
+            set => _reference.Array[_startIndex + col + row * _reference.RowCount] = value;
         }
 
         public override string ToString()
         {
             var builder = new StringBuilder();
-            for (int i = 0; i < Row; i++)
+            for (int i = 0; i < RowCount; i++)
             {
-                for (int j = 0; j < Col; j++)
+                for (int j = 0; j < ColCount; j++)
                 {
                     builder.Append($"{this[i, j]:N3} ");
                 }

@@ -60,16 +60,16 @@ namespace Matrix.Test
             subMat[1, 1] = -4;
 
             Console.WriteLine(mat.ToString());
-            Console.WriteLine(mat.Row + " x " + mat.Col);
+            Console.WriteLine(mat.RowCount + " x " + mat.ColCount);
             Console.WriteLine("===================");
             Console.WriteLine(subMat.ToString());
-            Console.WriteLine(subMat.Row + " x " + subMat.Col);
+            Console.WriteLine(subMat.RowCount + " x " + subMat.ColCount);
 
             Console.WriteLine("===================");
 
             subMat = new SubMatrix(subMat, 1, 1, 1, 1);
             Console.WriteLine(subMat.ToString());
-            Console.WriteLine(subMat.Row + " x " + subMat.Col);
+            Console.WriteLine(subMat.RowCount + " x " + subMat.ColCount);
         }
 
         [Test]
@@ -104,17 +104,17 @@ namespace Matrix.Test
             subMat[1, 1] = -4;
 
             Console.WriteLine(mat.ToString());
-            Console.WriteLine(mat.Row + " x " + mat.Col);
+            Console.WriteLine(mat.RowCount + " x " + mat.ColCount);
 
             Console.WriteLine("===================");
             Console.WriteLine(subMat.ToString());
-            Console.WriteLine(subMat.Row + " x " + subMat.Col);
+            Console.WriteLine(subMat.RowCount + " x " + subMat.ColCount);
 
             Console.WriteLine("===================");
 
             subMat = new SubMatrix(subMat, 1, 1, 2, 2);
             Console.WriteLine(subMat.ToString());
-            Console.WriteLine(subMat.Row + " x " + subMat.Col);
+            Console.WriteLine(subMat.RowCount + " x " + subMat.ColCount);
         }
 
         [Test]
@@ -125,7 +125,6 @@ namespace Matrix.Test
             mat[0, 1] = 2;
             mat[0, 2] = 3;
             mat[0, 3] = 4;
-
 
             mat[1, 0] = 5;
             mat[1, 1] = 6;
@@ -149,17 +148,17 @@ namespace Matrix.Test
             subMat[1, 1] = -4;
 
             Console.WriteLine(mat.ToString());
-            Console.WriteLine(mat.Row + " x " + mat.Col);
+            Console.WriteLine(mat.RowCount + " x " + mat.ColCount);
 
             Console.WriteLine("===================");
             Console.WriteLine(subMat.ToString());
-            Console.WriteLine(subMat.Row + " x " + subMat.Col);
+            Console.WriteLine(subMat.RowCount + " x " + subMat.ColCount);
 
             Console.WriteLine("===================");
 
             subMat = new SubMatrix(subMat, 1, 1, 1, 1);
             Console.WriteLine(subMat.ToString());
-            Console.WriteLine(subMat.Row + " x " + subMat.Col);
+            Console.WriteLine(subMat.RowCount + " x " + subMat.ColCount);
         }
 
         [Test]
@@ -268,18 +267,18 @@ namespace Matrix.Test
             identity = lInv * l;
             Console.WriteLine(identity);
         }
-        
+
         [Test]
         public void u分解テスト()
         {
             var denseMat = DenseMatrix.OfArray(new double[,]
             {
-                {8,16,24,32},
-                {2,7,12,17},
-                {6,17,32,59},
-                {7,22,46,105}
+                {8, 16, 24, 32},
+                {2, 7, 12, 17},
+                {6, 17, 32, 59},
+                {7, 22, 46, 105}
             });
-            
+
             var mat = new MatrixLib.Matrix(4, 4);
             mat[0, 0] = 8;
             mat[0, 1] = 16;
@@ -306,7 +305,7 @@ namespace Matrix.Test
             var u = lu.U;
 
             var uCorrect = denseMat.LU().U;
-            
+
             Console.WriteLine(u);
             Console.WriteLine(uCorrect);
 //            
@@ -317,20 +316,17 @@ namespace Matrix.Test
 //                    Assert.IsTrue(Math.Abs(u[i,j] - uCorrect[i,j]) < 0.001);
 //                }
 //            }
-            
- 
-            
         }
-        
+
         [Test]
         public void 逆行列テスト()
         {
             var denseMat = DenseMatrix.OfArray(new double[,]
             {
-                {8,16,24,32},
-                {2,7,12,17},
-                {6,17,32,59},
-                {7,22,46,105}
+                {8, 16, 24, 32},
+                {2, 7, 12, 17},
+                {6, 17, 32, 59},
+                {7, 22, 46, 105}
             });
             var mat = new MatrixLib.Matrix(4, 4);
             mat[0, 0] = 8;
@@ -361,7 +357,42 @@ namespace Matrix.Test
             {
                 for (int j = 0; j < 4; j++)
                 {
-                    Assert.IsTrue(Math.Abs(invCorrect[i,j] - inv[i,j]) < 0.001);
+                    Assert.IsTrue(Math.Abs(invCorrect[i, j] - inv[i, j]) < 0.001);
+                }
+            }
+        }
+
+        [Test]
+        public void 逆行列テストランダム版()
+        {
+            var mat = new MatrixLib.Matrix(4, 4);
+            var rand = new Random();
+
+            for (int i = 0; i < 4; i++)
+            {
+                for (int j = 0; j < 4; j++)
+                {
+                    mat[i, j] = rand.Next(0, 20);
+                }
+            }
+
+            var denseMat = new DenseMatrix(4, 4);
+            for (int i = 0; i < 4; i++)
+            {
+                for (int j = 0; j < 4; j++)
+                {
+                    denseMat[i, j] = mat[i, j];
+                }
+            }
+
+            var inv = mat.Inverse();
+            var invCorrect = denseMat.Inverse();
+
+            for (int i = 0; i < 4; i++)
+            {
+                for (int j = 0; j < 4; j++)
+                {
+                    Assert.IsTrue(Math.Abs(invCorrect[i, j] - inv[i, j]) < 0.001);
                 }
             }
         }
@@ -393,7 +424,7 @@ namespace Matrix.Test
 
             var lu = mat.LuSolve();
             var restore = lu.L * lu.U;
-            
+
             Console.WriteLine(mat);
             Console.WriteLine(restore);
 
@@ -401,11 +432,10 @@ namespace Matrix.Test
             {
                 for (int j = 0; j < 4; j++)
                 {
-                    
                 }
             }
         }
-        
+
         [Test]
         public void LU分解テストランダム版()
         {
@@ -416,13 +446,13 @@ namespace Matrix.Test
             {
                 for (int j = 0; j < 4; j++)
                 {
-                    mat[i, j] = rand.Next(0,20);
+                    mat[i, j] = rand.Next(0, 20);
                 }
             }
 
             var lu = mat.LuSolve();
             var restore = lu.L * lu.U;
-            
+
             Console.WriteLine(mat);
             Console.WriteLine(restore);
 
@@ -430,7 +460,75 @@ namespace Matrix.Test
             {
                 for (int j = 0; j < 4; j++)
                 {
-                    Assert.IsTrue(Math.Abs(mat[i,j] - restore[i,j])< 0.001);
+                    Assert.IsTrue(Math.Abs(mat[i, j] - restore[i, j]) < 0.001);
+                }
+            }
+        }
+
+        [Test]
+        public void 転置チェックランダム版()
+        {
+            int row = 4;
+            int col = 8;
+            var mat = new MatrixLib.Matrix(row, col);
+            var rand = new Random();
+
+            for (int i = 0; i < row; i++)
+            {
+                for (int j = 0; j < col; j++)
+                {
+                    mat[i, j] = rand.Next(0, 20);
+                }
+            }
+
+            var denseMat = new DenseMatrix(row, col);
+            for (int i = 0; i < row; i++)
+            {
+                for (int j = 0; j < col; j++)
+                {
+                    denseMat[i, j] = mat[i, j];
+                }
+            }
+            
+            Console.WriteLine(mat * mat.Transpose());
+            Console.WriteLine(denseMat * denseMat.Transpose());
+        }
+
+        [Test]
+        public void 擬似逆行列のランダムテスト()
+        {
+            int row = 8;
+            int col = 4;
+            var mat = new MatrixLib.Matrix(row, col);
+            var rand = new Random();
+
+            for (int i = 0; i < row; i++)
+            {
+                for (int j = 0; j < col; j++)
+                {
+                    mat[i, j] = rand.Next(0, 20);
+                }
+            }
+
+            var denseMat = new DenseMatrix(row, col);
+            for (int i = 0; i < row; i++)
+            {
+                for (int j = 0; j < col; j++)
+                {
+                    denseMat[i, j] = mat[i, j];
+                }
+            }
+            
+            Console.WriteLine(denseMat.PseudoInverse());
+            Console.WriteLine(mat.PseudoInverse());
+            var pseInv = mat.PseudoInverse();
+            var densePseInv = denseMat.PseudoInverse();
+
+            for (int i = 0; i < pseInv.RowCount; i++)
+            {
+                for (int j = 0; j < pseInv.ColCount; j++)
+                {
+                    Assert.IsTrue(Math.Abs(pseInv[i, j] - densePseInv[i, j]) < 0.001);
                 }
             }
         }

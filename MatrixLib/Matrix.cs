@@ -11,25 +11,25 @@ namespace MatrixLib
         /// <summary>
         /// 行数
         /// </summary>
-        public int Row { get; }
+        public int RowCount { get; }
 
         /// <summary>
         /// 列数
         /// </summary>
-        public int Col { get; }
+        public int ColCount { get; }
 
         public Matrix(double[] array, int row, int col)
         {
             Array = array;
-            Row = row;
-            Col = col;
+            RowCount = row;
+            ColCount = col;
         }
 
         public Matrix(int row, int col)
         {
             Array = new double[row * col];
-            Row = row;
-            Col = col;
+            RowCount = row;
+            ColCount = col;
         }
 
 
@@ -37,32 +37,32 @@ namespace MatrixLib
         {
             get
             {
-                if (row >= Row || col >= Col)
+                if (row >= RowCount || col >= ColCount)
                 {
                     throw new ArgumentException("this[int row, int col] out of range");
                 }
 
-                return Array[col + row * Col];
+                return Array[col + row * ColCount];
             }
             set
             {
-                if (row >= Row || col >= Col)
+                if (row >= RowCount || col >= ColCount)
                 {
                     throw new ArgumentException("this[int row, int col] out of range");
                 }
 
-                Array[col + row * Col] = value;
+                Array[col + row * ColCount] = value;
             }
         }
 
         public override string ToString()
         {
             var builder = new StringBuilder();
-            for (int i = 0; i < Row; i++)
+            for (int i = 0; i < RowCount; i++)
             {
-                for (int j = 0; j < Col; j++)
+                for (int j = 0; j < ColCount; j++)
                 {
-                    builder.Append($"{this[i, j]:N3} ");
+                    builder.Append($"{this[i, j]:N5} ");
                 }
 
                 builder.Append(Environment.NewLine);
@@ -86,51 +86,51 @@ namespace MatrixLib
         {
             var newArray = new double[this.Array.Length];
             System.Array.Copy(this.Array, newArray, newArray.Length);
-            return new Matrix(newArray, this.Row, this.Col);
+            return new Matrix(newArray, this.RowCount, this.ColCount);
         }
 
         public LuDecompositionResult LuSolve()
         {
-            if (Row != Col)
+            if (RowCount != ColCount)
             {
                 throw new DataException("row and col must be same");
             }
 
-            var lOrigin = new Matrix(Row, Col);
-            var uOrigin = Matrix.Identity(Row);
+            var lOrigin = new Matrix(RowCount, ColCount);
+            var uOrigin = Matrix.Identity(RowCount);
 
-            var a = new SubMatrix(this.DeepCopy(), 0, 0, Row, Col);
-            var l = new SubMatrix(lOrigin, 0, 0, Row, Col);
-            var u = new SubMatrix(uOrigin, 0, 0, Row, Col);
+            var a = new SubMatrix(this.DeepCopy(), 0, 0, RowCount, ColCount);
+            var l = new SubMatrix(lOrigin, 0, 0, RowCount, ColCount);
+            var u = new SubMatrix(uOrigin, 0, 0, RowCount, ColCount);
 
-            for (int i = 0; i < this.Row; i++)
+            for (int i = 0; i < this.RowCount; i++)
             {
                 //l00
                 l[0, 0] = a[0, 0];
 
                 //copy l1
-                for (int j = 1; j < a.Row; j++)
+                for (int j = 1; j < a.RowCount; j++)
                 {
                     l[j, 0] = a[j, 0];
                 }
 
                 //copy u1
-                for (int j = 1; j < a.Row; j++)
+                for (int j = 1; j < a.RowCount; j++)
                 {
                     u[0, j] = a[0, j] / l[0, 0];
                 }
 
-                for (int j = 1; j < a.Col; j++)
+                for (int j = 1; j < a.ColCount; j++)
                 {
-                    for (int k = 1; k < a.Col; k++)
+                    for (int k = 1; k < a.ColCount; k++)
                     {
                         a[j, k] -= l[j, 0] * u[0, k];
                     }
                 }
 
-                a = new SubMatrix(a, 1, 1, a.Row - 1, a.Col - 1);
-                l = new SubMatrix(l, 1, 1, l.Row - 1, l.Col - 1);
-                u = new SubMatrix(u, 1, 1, u.Row - 1, u.Col - 1);
+                a = new SubMatrix(a, 1, 1, a.RowCount - 1, a.ColCount - 1);
+                l = new SubMatrix(l, 1, 1, l.RowCount - 1, l.ColCount - 1);
+                u = new SubMatrix(u, 1, 1, u.RowCount - 1, u.ColCount - 1);
             }
 
             return new LuDecompositionResult(lOrigin, uOrigin);
@@ -199,14 +199,14 @@ namespace MatrixLib
         public Matrix InverseUpperTriangularMatrix()
         {
             //上三角行列の逆行列は上三角行列
-            if (this.Col != this.Row)
+            if (this.ColCount != this.RowCount)
             {
                 throw new Exception("Col and Row must be same");
             }
 
-            var answer = new Matrix(this.Row, this.Col);
+            var answer = new Matrix(this.RowCount, this.ColCount);
 
-            for (int i = 0; i < answer.Col; i++)
+            for (int i = 0; i < answer.ColCount; i++)
             {
                 //answer[~,i]が見ている列のベクトル
                 answer[i, i] = 1 / this[i, i];
@@ -215,7 +215,7 @@ namespace MatrixLib
                 {
                     double sum = 0.0;
 
-                    for (int k = j + 1; k < answer.Row; k++)
+                    for (int k = j + 1; k < answer.RowCount; k++)
                     {
                         sum += answer[k, i] * this[j, k];
                     }
@@ -234,20 +234,20 @@ namespace MatrixLib
         public Matrix InverseLowerTriangularMatrix()
         {
             //上三角行列の逆行列は上三角行列
-            if (this.Col != this.Row)
+            if (this.ColCount != this.RowCount)
             {
                 throw new Exception("Col and Row must be same");
             }
 
-            var answer = new Matrix(this.Row, this.Col);
+            var answer = new Matrix(this.RowCount, this.ColCount);
 
-            for (int i = 0; i < answer.Col; i++)
+            for (int i = 0; i < answer.ColCount; i++)
             {
                 //逆行列の各列ごとに求めて行く。
                 //answer[~,i]が見ている列のベクトル
                 answer[i, i] = 1 / this[i, i];
 
-                for (int j = i + 1; j < this.Row; j++)
+                for (int j = i + 1; j < this.RowCount; j++)
                 {
                     double sum = 0.0;
 
@@ -264,23 +264,25 @@ namespace MatrixLib
 
         public Matrix PseudoInverse()
         {
-            return null;
+            var transpose = new ReferencedTransposeMatrix(this);
+            var inverse = (transpose * this).Inverse();
+            return inverse * transpose;
         }
 
         public static Matrix operator *(Matrix l, Matrix r)
         {
-            if (l.Col != r.Row)
+            if (l.ColCount != r.RowCount)
             {
                 throw new ArgumentException("l.Col and r.Row must be same.");
             }
 
-            var answer = new Matrix(l.Row, r.Col);
+            var answer = new Matrix(l.RowCount, r.ColCount);
 
-            for (int i = 0; i < answer.Row; i++)
+            for (int i = 0; i < answer.RowCount; i++)
             {
-                for (int j = 0; j < answer.Col; j++)
+                for (int j = 0; j < answer.ColCount; j++)
                 {
-                    for (int k = 0; k < l.Col; k++)
+                    for (int k = 0; k < l.ColCount; k++)
                     {
                         answer[i, j] += l[i, k] * r[k, j];
                     }
@@ -292,18 +294,40 @@ namespace MatrixLib
 
         public static Matrix operator *(Matrix l, ReferencedTransposeMatrix r)
         {
-            if (l.Col != r.Row)
+            if (l.ColCount != r.RowCount)
             {
                 throw new ArgumentException("l.Col and r.Row must be same.");
             }
 
-            var answer = new Matrix(l.Row, r.Col);
+            var answer = new Matrix(l.RowCount, r.ColCount);
 
-            for (int i = 0; i < answer.Row; i++)
+            for (int i = 0; i < answer.RowCount; i++)
             {
-                for (int j = 0; j < answer.Col; j++)
+                for (int j = 0; j < answer.ColCount; j++)
                 {
-                    for (int k = 0; k < l.Col; k++)
+                    for (int k = 0; k < l.ColCount; k++)
+                    {
+                        answer[i, j] += l[i, k] * r[k, j];
+                    }
+                }
+            }
+            return answer;
+        }
+
+        public static Matrix operator *(ReferencedTransposeMatrix l, Matrix r)
+        {
+            if (l.ColCount != r.RowCount)
+            {
+                throw new ArgumentException("l.Col and r.Row must be same.");
+            }
+
+            var answer = new Matrix(l.RowCount, r.ColCount);
+
+            for (int i = 0; i < answer.RowCount; i++)
+            {
+                for (int j = 0; j < answer.ColCount; j++)
+                {
+                    for (int k = 0; k < l.ColCount; k++)
                     {
                         answer[i, j] += l[i, k] * r[k, j];
                     }
@@ -313,27 +337,9 @@ namespace MatrixLib
             return answer;
         }
 
-        public static Matrix operator *(ReferencedTransposeMatrix l, Matrix r)
+        public ReferencedTransposeMatrix Transpose()
         {
-            if (l.Col != r.Row)
-            {
-                throw new ArgumentException("l.Col and r.Row must be same.");
-            }
-
-            var answer = new Matrix(l.Row, r.Col);
-
-            for (int i = 0; i < answer.Row; i++)
-            {
-                for (int j = 0; j < answer.Col; j++)
-                {
-                    for (int k = 0; k < l.Col; k++)
-                    {
-                        answer[i, j] += l[i, k] * r[k, j];
-                    }
-                }
-            }
-
-            return answer;
+            return new ReferencedTransposeMatrix(this);
         }
     }
 }

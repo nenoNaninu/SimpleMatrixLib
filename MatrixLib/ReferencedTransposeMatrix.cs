@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace MatrixLib
@@ -6,8 +7,8 @@ namespace MatrixLib
     public struct ReferencedTransposeMatrix : IMatrix<double>
     {
         private readonly IMatrix<double> _reference;
-        public int Row { get; }
-        public int Col { get; }
+        public int RowCount { get; }
+        public int ColCount { get; }
 
         /// <summary>
         /// 
@@ -16,15 +17,15 @@ namespace MatrixLib
         public ReferencedTransposeMatrix(IMatrix<double> reference)
         {
             _reference = reference;
-            Row = reference.Col;
-            Col = reference.Row;
+            RowCount = reference.ColCount;
+            ColCount = reference.RowCount;
         }
 
         public double this[int row, int col]
         {
             get
             {
-                if (Row <= row || Col <= col)
+                if (RowCount <= row || ColCount <= col)
                 {
                     throw new ArgumentException("out of range ReferencedTransposeMatrix [int row, int col]");
                 }
@@ -32,6 +33,22 @@ namespace MatrixLib
                 return _reference[col, row];
             }
             set => _reference[col, row] = value;
+        }
+        
+        public override string ToString()
+        {
+            var builder = new StringBuilder();
+            for (int i = 0; i < RowCount; i++)
+            {
+                for (int j = 0; j < ColCount; j++)
+                {
+                    builder.Append($"{this[i, j]:N3} ");
+                }
+
+                builder.Append(Environment.NewLine);
+            }
+
+            return builder.ToString();
         }
     }
 }
